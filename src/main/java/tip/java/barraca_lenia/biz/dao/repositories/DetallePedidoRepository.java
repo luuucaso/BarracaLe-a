@@ -1,4 +1,9 @@
 package tip.java.barraca_lenia.biz.dao.repositories;
 
-public interface DetallePedidoRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import tip.java.barraca_lenia.biz.dao.entities.DetallePedido;
+
+@Repository
+public interface DetallePedidoRepository extends JpaRepository<DetallePedido,Long> {
 }
