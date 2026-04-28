@@ -39,5 +39,13 @@ public class Usuario {
     private List<Direccion> direcciones;
 
 
+    public enum Rol {
+        ADMIN,
+        CLIENTE,
+        EMPLEADO
+    }
+
+    @Enumerated(EnumType.STRING)
+    private Rol rol;
 
 }
