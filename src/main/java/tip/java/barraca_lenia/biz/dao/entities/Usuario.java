@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@Entity
 @Table(name = "usuarios")
 public class Usuario {
 
@@ -35,8 +36,8 @@ public class Usuario {
 
     //faltarolusuario
 
-    @OneToMany(mappedBy = "direccion")
-    private List<Direccion> direcciones;
+//    @OneToMany(mappedBy = "direccion")
+//    private List<Direccion> direcciones;
 
 
     public enum Rol {
