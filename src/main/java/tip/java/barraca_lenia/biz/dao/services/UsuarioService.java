@@ -16,45 +16,51 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    public Usuario crearUsuario( UsuarioDTO usuarioDTO) {
+    public UsuarioDTO crearUsuario( UsuarioDTO usuarioDTO) {
 
-        Optional<Usuario> u = usuarioRepository.findByTelefono(usuarioDTO.getTelefono());
+        Optional<Usuario> existente = usuarioRepository.findByTelefono(usuarioDTO.getTelefono());
 
+        if (existente.isPresent()) {
+            throw new RuntimeException("Ya existe un usuario con ese teléfono");
+        }
 
-        if (u.isPresent()) {
-            Usuario usuario = new Usuario();
+        Usuario usuario = new Usuario();
 
             usuario.setNombre(usuarioDTO.getNombre());
             usuario.setPassword(usuarioDTO.getPassword());
             usuario.setTelefono(usuarioDTO.getTelefono());
             usuario.setRut(usuarioDTO.getRut());
-            return usuarioRepository.save(usuario);
-        }
-        throw new RuntimeException("El usuario ya existe");
+            Usuario guardado = usuarioRepository.save(usuario);
+
+            return mapeo(guardado);
+
     }
 
-    public boolean borrarUsuario(String telefono){
+    public void borrarUsuario(String telefono){
         Optional<Usuario> u = usuarioRepository.findByTelefono(telefono);
-        if(u.isPresent()){
-            usuarioRepository.delete(u.get());
-            return true;
+
+        if(u.isEmpty()){
+            throw new RuntimeException("Usuario no encontrado con teléfono: "+ telefono);
         }
-        return false;
+        usuarioRepository.delete(u.get());
 
     }
 
-    public Usuario actualizarUsuario(UsuarioDTO usuarioDTO) {
-        Optional<Usuario> u = usuarioRepository.findByTelefono(usuarioDTO.getTelefono());
-        if(u.isPresent()){
+    public UsuarioDTO actualizarUsuario(String telefono, UsuarioDTO usuarioDTO) {
+        Optional<Usuario> u = usuarioRepository.findByTelefono(telefono);
+
+        if(u.isEmpty()){
+            throw new RuntimeException("Usuario no encontrado con télefono: " + telefono);
+        }
+
             Usuario usuario = u.get();
             usuario.setNombre(usuarioDTO.getNombre());
             usuario.setTelefono(usuarioDTO.getTelefono());
             usuario.setPassword(usuarioDTO.getPassword());
-            usuario.setRut(usuarioDTO.getPassword());
+            usuario.setRut(usuarioDTO.getRut());
 
-            return usuarioRepository.save(usuario);
-        }
-        return null;
+            Usuario actualizado = usuarioRepository.save(usuario);
+            return mapeo(actualizado);
     }
 
     public List<UsuarioDTO> listarUsuarios()
@@ -64,8 +70,21 @@ public class UsuarioService {
             u.setNombre(usuario.getNombre());
             u.setId(usuario.getId());
             u.setTelefono(usuario.getTelefono());
+            u.setPassword(usuario.getPassword());
             u.setRut(usuario.getRut());
             return u;
         }).toList();
     }
+
+    private UsuarioDTO mapeo(Usuario usuario){
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setId(usuario.getId());
+        usuarioDTO.setNombre(usuario.getNombre());
+        usuarioDTO.setTelefono(usuario.getTelefono());
+        usuarioDTO.setPassword(usuario.getPassword());
+        usuarioDTO.setRut(usuario.getRut());
+        return usuarioDTO;
+
+    }
+
 }

@@ -2,6 +2,8 @@ package tip.java.barraca_lenia.api.controllers;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tip.java.barraca_lenia.biz.dao.entities.Usuario;
 import tip.java.barraca_lenia.biz.dao.services.UsuarioService;
@@ -10,7 +12,7 @@ import tip.java.barraca_lenia.dto.UsuarioDTO;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/barraca")
+
 @AllArgsConstructor
 
 public class UsuarioController {
@@ -18,26 +20,32 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     //crear
-    @PostMapping("/usuarios")
-    public Usuario crearUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        return usuarioService.crearUsuario(usuarioDTO);
+    @PostMapping("/crearUsuario")
+    public ResponseEntity<UsuarioDTO> crearUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+
+        UsuarioDTO creado = usuarioService.crearUsuario(usuarioDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     //borrar
-    @DeleteMapping("/usuarios/{telefono}")
-    public Boolean eliminarUsuario(@PathVariable String telefono) {
-        return usuarioService.borrarUsuario(telefono);
+    @DeleteMapping("/eliminarUsuario/{telefono}")
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable String telefono) {
+        usuarioService.borrarUsuario(telefono);
+
+        return ResponseEntity.noContent().build();
     }
 
-    //actualzar
-    @PutMapping("/usuarios/{telefono}")
-    public Usuario modificarUsuario(@PathVariable String telefono, @RequestBody UsuarioDTO usuarioDTO) {
-        usuarioDTO.setTelefono(telefono);
-        return usuarioService.actualizarUsuario(usuarioDTO);
+    //actualizar
+    @PutMapping("/actualizarUsuario/{telefono}")
+    public ResponseEntity<UsuarioDTO> modificarUsuario(@PathVariable String telefono, @RequestBody UsuarioDTO usuarioDTO) {
+
+        UsuarioDTO actualizado = usuarioService.actualizarUsuario(telefono, usuarioDTO);
+
+        return ResponseEntity.ok(actualizado);
     }
 
     //listar
-    @GetMapping("/usuarios")
+    @GetMapping("/listarUsuarios")
     public List<UsuarioDTO> listarUsuarios(){
         return usuarioService.listarUsuarios();
     }
