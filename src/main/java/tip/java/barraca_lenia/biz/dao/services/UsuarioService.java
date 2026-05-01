@@ -50,7 +50,7 @@ public class UsuarioService {
             usuario.setNombre(usuarioDTO.getNombre());
             usuario.setTelefono(usuarioDTO.getTelefono());
             usuario.setPassword(usuarioDTO.getPassword());
-            usuario.setRut(usuarioDTO.getPassword());
+            usuario.setRut(usuarioDTO.getRut());
 
             return usuarioRepository.save(usuario);
         }
