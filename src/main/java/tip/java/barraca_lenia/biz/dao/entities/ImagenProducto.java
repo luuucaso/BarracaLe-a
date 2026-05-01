@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "imagenes_prodictos")
+@Table(name = "imagenes_productos")
 public class ImagenProducto {
 
     @Id

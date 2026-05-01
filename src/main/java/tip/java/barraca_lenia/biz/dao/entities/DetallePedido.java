@@ -31,9 +31,10 @@ public class DetallePedido {
 
     @ManyToOne
     @JoinColumn(name = "id_presentacion")
-    private Presentacion presentaciones;
+    private Presentacion presentacion;
 
     @ManyToOne
     @JoinColumn(name = "id_pedido")
-    private Pedido pedidos;
+    private Pedido pedido;
+
 }

@@ -36,12 +36,12 @@ public class ClienteAnonimo {
     private String calle;
 
     @Column(name="numero_casa")
-    private String numeroCasa;
+    private String numesroCasa;
 
     @Column(name="referencia")
     private String referencia;
 
-    @OneToMany(mappedBy = "cliente_anonimo")
+    @OneToMany(mappedBy = "clienteAnonimo")
     private List<Pedido> pedidos;
 
 
