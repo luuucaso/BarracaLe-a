@@ -3,10 +3,10 @@ package tip.java.barraca_lenia.biz.dao.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import tip.java.barraca_lenia.biz.dao.entities.Usuario;
+import tip.java.barraca_lenia.biz.dao.entities.Producto;
 import tip.java.barraca_lenia.biz.dao.repositories.ProductoRepository;
-import tip.java.barraca_lenia.biz.dao.repositories.UsuarioRepository;
-import tip.java.barraca_lenia.dto.UsuarioDTO;
+import tip.java.barraca_lenia.dto.ProductoDTO;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -17,56 +17,78 @@ public class ProductoService {
 
     private final ProductoRepository productoRepository;
 
-    public Usuario crearUsuario( UsuarioDTO usuarioDTO) {
+    public ProductoDTO crearProducto(ProductoDTO productoDTO) {
 
-        Optional<Usuario> u = usuarioRepository.findByTelefono(usuarioDTO.getTelefono());
+        Optional<Producto> existente = productoRepository.findByNombre(productoDTO.getNombre());
 
-
-        if (u.isPresent()) {
-            Usuario usuario = new Usuario();
-
-            usuario.setNombre(usuarioDTO.getNombre());
-            usuario.setPassword(usuarioDTO.getPassword());
-            usuario.setTelefono(usuarioDTO.getTelefono());
-            usuario.setRut(usuarioDTO.getRut());
-            return usuarioRepository.save(usuario);
+        if (existente.isPresent()) {
+            throw new RuntimeException("Ya existe el prducto con el id: " + productoDTO.getId());
         }
-        throw new RuntimeException("El usuario ya existe");
-    }
 
-    public boolean borrarUsuario(String telefono){
-        Optional<Usuario> u = usuarioRepository.findByTelefono(telefono);
-        if(u.isPresent()){
-            usuarioRepository.delete(u.get());
-            return true;
-        }
-        return false;
+        Producto producto= new Producto();
+
+        producto.setNombre(productoDTO.getNombre());
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setTipoUso(productoDTO.getTipoUso());
+        producto.setActivo(productoDTO.getActivo());
+
+        Producto guardado = productoRepository.save(producto);
+
+        return mapeo(guardado);
+
 
     }
 
-    public Usuario actualizarUsuario(UsuarioDTO usuarioDTO) {
-        Optional<Usuario> u = usuarioRepository.findByTelefono(usuarioDTO.getTelefono());
-        if(u.isPresent()){
-            Usuario usuario = u.get();
-            usuario.setNombre(usuarioDTO.getNombre());
-            usuario.setTelefono(usuarioDTO.getTelefono());
-            usuario.setPassword(usuarioDTO.getPassword());
-            usuario.setRut(usuarioDTO.getRut());
+    public void borrarProducto(Long id) {
 
-            return usuarioRepository.save(usuario);
+        Optional<Producto> existente = productoRepository.findById(id);
+
+        if (existente.isEmpty()) {
+            throw new RuntimeException("No existe el prducto con el id: " + id);
         }
-        return null;
+        productoRepository.delete(existente.get());
+
     }
 
-    public List<UsuarioDTO> listarUsuarios()
-    {
-        return usuarioRepository.findAll().stream().map(usuario->{
-            UsuarioDTO u = new UsuarioDTO();
-            u.setNombre(usuario.getNombre());
-            u.setId(usuario.getId());
-            u.setTelefono(usuario.getTelefono());
-            u.setRut(usuario.getRut());
-            return u;
+    public ProductoDTO actualizarProducto(ProductoDTO productoDTO, Long id) {
+        Optional<Producto> existente = productoRepository.findById(id);
+
+        if (existente.isEmpty()) {
+            throw new RuntimeException("No existe el prducto con el id: " + productoDTO.getId());
+        }
+
+        Producto producto = existente.get();
+
+        producto.setNombre(productoDTO.getNombre());
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setTipoUso(productoDTO.getTipoUso());
+        producto.setActivo(productoDTO.getActivo());
+
+        Producto actualizado = productoRepository.save(producto);
+        return mapeo(actualizado);
+
+    }
+
+    public List<ProductoDTO> listarProductos() {
+        return productoRepository.findAll().stream().map(producto->{
+            ProductoDTO p = new ProductoDTO();
+            p.setNombre(producto.getNombre());
+            p.setDescripcion(producto.getDescripcion());
+            p.setTipoUso(producto.getTipoUso());
+            p.setActivo(producto.getActivo());
+            return p;
         }).toList();
+
+    }
+
+    private ProductoDTO mapeo(Producto producto) {
+        ProductoDTO productoDTO = new ProductoDTO();
+        productoDTO.setId(producto.getId());
+        productoDTO.setNombre(producto.getNombre());
+        productoDTO.setActivo(producto.getActivo());
+        productoDTO.setDescripcion(producto.getDescripcion());
+        productoDTO.setTipoUso(producto.getTipoUso());
+        return productoDTO;
+
     }
 }

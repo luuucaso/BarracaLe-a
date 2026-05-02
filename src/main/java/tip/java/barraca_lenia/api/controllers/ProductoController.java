@@ -2,44 +2,51 @@ package tip.java.barraca_lenia.api.controllers;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tip.java.barraca_lenia.biz.dao.entities.Usuario;
-import tip.java.barraca_lenia.biz.dao.services.UsuarioService;
-import tip.java.barraca_lenia.dto.UsuarioDTO;
+import tip.java.barraca_lenia.biz.dao.services.ProductoService;
+import tip.java.barraca_lenia.dto.ProductoDTO;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/barraca")
+@RequestMapping("/api/v1/producto")
 @AllArgsConstructor
 
 public class ProductoController {
 
-    private final UsuarioService usuarioService;
+    private final ProductoService productoService;
 
     //crear
-    @PostMapping("/productos")
-    public Usuario crearUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        return usuarioService.crearUsuario(usuarioDTO);
+    @PostMapping("/crearProducto")
+    public ResponseEntity<ProductoDTO> crearUsuario(@RequestBody ProductoDTO productoDTO) {
+
+        ProductoDTO creado = productoService.crearProducto(productoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     //borrar
-    @DeleteMapping("/productos/{}")
-    public Boolean eliminarUsuario(@PathVariable String telefono) {
-        return usuarioService.borrarUsuario(telefono);
+    @DeleteMapping("/eliminarProducto/{id}")
+    public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
+        productoService.borrarProducto(id);
+
+        return ResponseEntity.noContent().build();
     }
 
-    //actualzar
-    @PutMapping("/productos/{}")
-    public Usuario modificarUsuario(@PathVariable String telefono, @RequestBody UsuarioDTO usuarioDTO) {
-        usuarioDTO.setTelefono(telefono);
-        return usuarioService.actualizarUsuario(usuarioDTO);
+    //actualizar
+    @PutMapping("/actualizarProducto/{id}")
+    public ResponseEntity<ProductoDTO> modificarUsuario(@PathVariable Long id, @RequestBody ProductoDTO productoDTO) {
+
+        ProductoDTO actualizado = productoService.actualizarProducto(productoDTO, id);
+
+        return ResponseEntity.ok(actualizado);
     }
 
     //listar
-    @GetMapping("/productos")
-    public List<UsuarioDTO> listarUsuarios(){
-        return usuarioService.listarUsuarios();
+    @GetMapping("/listarProducto")
+    public List<ProductoDTO> listarProductos(){
+        return productoService.listarProductos();
     }
 
 
