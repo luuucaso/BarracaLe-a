@@ -17,6 +17,7 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/**").permitAll()
                         .requestMatchers("/usuarios/**").permitAll()
                         .requestMatchers("/usuariosListar/**").permitAll()
                         .anyRequest().permitAll()
