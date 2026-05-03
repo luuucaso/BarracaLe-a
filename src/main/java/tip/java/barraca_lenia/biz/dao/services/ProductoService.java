@@ -72,6 +72,7 @@ public class ProductoService {
     public List<ProductoDTO> listarProductos() {
         return productoRepository.findAll().stream().map(producto->{
             ProductoDTO p = new ProductoDTO();
+            p.setId(producto.getId());
             p.setNombre(producto.getNombre());
             p.setDescripcion(producto.getDescripcion());
             p.setTipoUso(producto.getTipoUso());
