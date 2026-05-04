@@ -44,50 +44,56 @@ public class PresentacionService {
 
 
     }
-/*
-    public void borrarProducto(Long id) {
 
-        Optional<Producto> existente = productoRepository.findById(id);
+    public void borrarPresentacion(Long id) {
+
+        Optional<Presentacion> existente = presentacionRepository.findById(id);
 
         if (existente.isEmpty()) {
-            throw new RuntimeException("No existe el prducto con el id: " + id);
+            throw new RuntimeException("No existe la presentacion con el id: " + id);
         }
-        productoRepository.delete(existente.get());
+        presentacionRepository.delete(existente.get());
 
     }
 
-    public ProductoDTO actualizarProducto(ProductoDTO productoDTO, Long id) {
-        Optional<Producto> existente = productoRepository.findById(id);
+    public PresentacionDTO actualizarPresentacion(PresentacionDTO presentacionDTO, Long id) {
+        Optional<Presentacion> existente = presentacionRepository.findById(id);
 
         if (existente.isEmpty()) {
-            throw new RuntimeException("No existe el prducto con el id: " + productoDTO.getId());
+            throw new RuntimeException("No existe la presentacion con el id: " + id);
         }
 
-        Producto producto = existente.get();
+        Presentacion presentacion = existente.get();
 
-        producto.setNombre(productoDTO.getNombre());
-        producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setTipoUso(productoDTO.getTipoUso());
-        producto.setActivo(productoDTO.getActivo());
+        presentacion.setDescripcion(presentacionDTO.getDescripcion());
+        presentacion.setCantidad(presentacionDTO.getCantidad());
+        presentacion.setPrecio(presentacionDTO.getPrecio());
+        presentacion.setUnidadMedida(presentacionDTO.getUnidadMedida());
+        Producto producto = productoRepository.findById(presentacionDTO.getIdProducto()).
+                orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        Producto actualizado = productoRepository.save(producto);
+        presentacion.setProducto(producto);
+
+
+        Presentacion actualizado = presentacionRepository.save(presentacion);
         return mapeo(actualizado);
 
     }
 
-    public List<ProductoDTO> listarProductos() {
-        return productoRepository.findAll().stream().map(producto->{
-            ProductoDTO p = new ProductoDTO();
-            p.setId(producto.getId());
-            p.setNombre(producto.getNombre());
-            p.setDescripcion(producto.getDescripcion());
-            p.setTipoUso(producto.getTipoUso());
-            p.setActivo(producto.getActivo());
+    public List<PresentacionDTO> listarPresentacion() {
+        return presentacionRepository.findAll().stream().map(presentacion->{
+            PresentacionDTO p = new PresentacionDTO();
+            p.setId(presentacion.getId());
+            p.setDescripcion(presentacion.getDescripcion());
+            p.setCantidad(presentacion.getCantidad());
+            p.setPrecio(presentacion.getPrecio());
+            p.setUnidadMedida(presentacion.getUnidadMedida());
+            p.setIdProducto(presentacion.getProducto().getId());
             return p;
         }).toList();
 
     }
-*/
+
     private PresentacionDTO mapeo(Presentacion presentacion) {
         PresentacionDTO presentacionDTO = new PresentacionDTO();
         presentacionDTO.setId(presentacion.getId());
