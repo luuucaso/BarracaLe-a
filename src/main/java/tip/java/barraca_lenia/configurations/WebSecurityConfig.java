@@ -17,8 +17,14 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/usuarios/**").permitAll()
-                        .requestMatchers("/usuariosListar/**").permitAll()
+                        .requestMatchers("/crearUsuario/**").permitAll()
+                        .requestMatchers("/eliminarUsuario/**").permitAll()
+                        .requestMatchers("/actualizarUsuario/**").permitAll()
+                        .requestMatchers("/listarUsuarios/**").permitAll()
+                        .requestMatchers("/crearRol/**").permitAll()
+                        .requestMatchers("/borrarRol/**").permitAll()
+                        .requestMatchers("/actualizarRol/**").permitAll()
+                        .requestMatchers("/listarRoles/**").permitAll()
                         .anyRequest().permitAll()
                 );
 
