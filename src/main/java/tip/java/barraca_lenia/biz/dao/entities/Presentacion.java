@@ -15,14 +15,16 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "presentaciones")
+@Table(name = "presentaciones")/*, uniqueConstraints = {
+@UniqueConstraint(columnNames = {"id_producto", "descripcion"})
+    })*/
 public class Presentacion {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id_presentacion")
-    private Integer id;
+    private Long id;
 
     @Column(name = "descripcion")
     private String descripcion;

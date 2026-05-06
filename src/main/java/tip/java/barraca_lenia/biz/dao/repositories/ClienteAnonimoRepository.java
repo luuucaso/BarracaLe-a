@@ -4,9 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import tip.java.barraca_lenia.biz.dao.entities.ClienteAnonimo;
 
+import java.util.Optional;
+
 @Repository
 public interface ClienteAnonimoRepository extends JpaRepository<ClienteAnonimo, Long> {
-
+    public Optional<ClienteAnonimo> findByToken(String token);
 
 
 }
