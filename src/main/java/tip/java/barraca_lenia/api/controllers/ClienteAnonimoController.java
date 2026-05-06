@@ -34,20 +34,10 @@ public class ClienteAnonimoController {
             response.addCookie(cookie);
         }
 
-        ClienteAnonimoDTO dto = mapToDTO(cliente);
+        ClienteAnonimoDTO dto = clienteAnonimoService.mapeo(cliente);
 
         return ResponseEntity.ok(dto);
     }
 
-    private ClienteAnonimoDTO mapToDTO(ClienteAnonimo cliente) {
-        ClienteAnonimoDTO dto = new ClienteAnonimoDTO();
 
-        dto.setNombre(cliente.getNombre());
-        dto.setTelefono(cliente.getTelefono());
-        dto.setCalle(cliente.getCalle());
-        dto.setNumeroCasa(cliente.getNumeroCasa());
-        dto.setReferencia(cliente.getReferencia());
-
-        return dto;
-    }
 }
