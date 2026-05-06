@@ -36,7 +36,7 @@ public class ClienteAnonimo {
     private String calle;
 
     @Column(name="numero_casa")
-    private String numesroCasa;
+    private String numeroCasa;
 
     @Column(name="referencia")
     private String referencia;
