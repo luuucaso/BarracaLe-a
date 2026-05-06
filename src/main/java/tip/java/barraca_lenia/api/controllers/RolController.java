@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/api/v1/rol")
 public class RolController {
 
     private final RolService rolService;
