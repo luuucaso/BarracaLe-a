@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tip.java.barraca_lenia.biz.dao.entities.Usuario;
 import tip.java.barraca_lenia.biz.dao.services.UsuarioService;
 import tip.java.barraca_lenia.dto.UsuarioDTO;
 
 import java.util.List;
 
 @RestController
-
+@RequestMapping("/api/v1/usuario")
 @AllArgsConstructor
 
 public class UsuarioController {
