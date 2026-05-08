@@ -19,6 +19,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/**").permitAll()
                         .requestMatchers("/crearUsuario/**").permitAll()
+                        .requestMatchers("/registrarUsuario/**").permitAll()
                         .requestMatchers("/eliminarUsuario/**").permitAll()
                         .requestMatchers("/actualizarUsuario/**").permitAll()
                         .requestMatchers("/listarUsuarios/**").permitAll()
