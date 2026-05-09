@@ -42,19 +42,6 @@ public class UsuarioService {
             return mapeo(guardado);
 
     }
-
-    public UsuarioDTO loginUsuario(UsuarioDTO usuarioDTO) {
-
-        Usuario usuario = usuarioRepository.findByTelefono(usuarioDTO.getTelefono())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        if (!usuario.getPassword().equals(usuarioDTO.getPassword())) {
-            throw new RuntimeException("Contraseña incorrecta");
-        }
-
-        return mapeo(usuario);
-    }
-
     public Usuario registrar(RegistroUsuarioDTO dto) {
 
         Optional<Usuario> existente = usuarioRepository.findByTelefono(dto.getTelefono());
