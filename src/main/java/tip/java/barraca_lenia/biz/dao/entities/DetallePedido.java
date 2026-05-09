@@ -21,13 +21,13 @@ public class DetallePedido {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id_detalle_pedido")
-    private Integer id;
+    private Long id;
 
     @Column(name = "cantidad")
     private Integer cantidad;
 
     @Column(name = "subtotal")
-    private BigDecimal subtotal;
+    private Float subtotal;
 
     @ManyToOne
     @JoinColumn(name = "id_presentacion")
