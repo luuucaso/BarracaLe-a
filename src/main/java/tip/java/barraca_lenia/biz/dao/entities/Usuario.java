@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@Entity
 @Table(name = "usuarios")
 public class Usuario {
 
@@ -33,19 +34,11 @@ public class Usuario {
     @Column(name = "rut")
     private String rut;
 
-    //faltarolusuario
+    @OneToMany(mappedBy = "usuario")
+    private List<Pedido> pedidos;
 
-    @OneToMany(mappedBy = "direccion")
-    private List<Direccion> direcciones;
+    @OneToMany(mappedBy = "usuario")
+    private List<RolUsuario> rolUsuarios ;
 
-
-    public enum Rol {
-        ADMIN,
-        CLIENTE,
-        EMPLEADO
-    }
-
-    @Enumerated(EnumType.STRING)
-    private Rol rol;
 
 }

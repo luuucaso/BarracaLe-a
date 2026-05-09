@@ -44,6 +44,10 @@ public class Pedido {
     @JoinColumn(name = "id_estado")
     private Estado estado;
 
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
+
     @OneToMany(mappedBy = "pedido")
     private List<Notificacion> notificaciones;
 

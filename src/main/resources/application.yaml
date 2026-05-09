@@ -4,12 +4,12 @@ spring:
   application:
     name: barraca_lenia
   main:
-    allowe-bean-definition-overriding: true
+    allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/barraca_lenia
-    username: postgres
-    password: postgres
-    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://aws-1-us-west-2.pooler.supabase.com:5432/postgres
+    username: postgres.dokknuylfwcjcuimgvrx
+    password: "uMP7Y@rp+S?n5y$"
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update

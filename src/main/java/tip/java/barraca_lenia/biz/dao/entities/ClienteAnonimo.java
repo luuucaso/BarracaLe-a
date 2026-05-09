@@ -41,7 +41,7 @@ public class ClienteAnonimo {
     @Column(name="referencia")
     private String referencia;
 
-    @OneToMany(mappedBy = "cliente_anonimo")
+    @OneToMany(mappedBy = "clienteAnonimo")
     private List<Pedido> pedidos;
 
 

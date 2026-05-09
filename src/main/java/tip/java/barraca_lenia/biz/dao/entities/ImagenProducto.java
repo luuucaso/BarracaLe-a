@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "imagenes_prodictos")
+@Table(name = "imagenes_productos")
 public class ImagenProducto {
 
     @Id
@@ -23,8 +23,15 @@ public class ImagenProducto {
     @Column(name = "id_imagen_producto")
     private Long id;
 
-    @Column(name = "url")
-    private String url;
+    @Column(name = "nombre")
+    private String nombre;
+
+    @Column(name = "extension")
+    private String extension;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String imagen;
 
     @Column(name = "es_principal")
     private Boolean esPrincipal;
@@ -34,3 +41,6 @@ public class ImagenProducto {
     private Producto producto;
 
 }
+
+
+
