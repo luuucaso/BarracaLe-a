@@ -28,13 +28,6 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PostMapping("/loginUsuario")
-    public ResponseEntity<UsuarioDTO> loginUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-
-        UsuarioDTO login = usuarioService.loginUsuario(usuarioDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(login);
-    }
-
     //registrar
     @PostMapping("/registrarUsuario")
     public Usuario registrar(@RequestBody RegistroUsuarioDTO dto) {
