@@ -36,7 +36,7 @@ public class Presentacion {
     private String unidadMedida;
 
     @Column(name = "precio")
-    private BigDecimal precio;
+    private Float precio;
 
     @ManyToOne
     @JoinColumn(name = "id_producto")

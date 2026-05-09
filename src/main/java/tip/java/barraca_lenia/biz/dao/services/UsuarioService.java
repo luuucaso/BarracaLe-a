@@ -43,6 +43,7 @@ public class UsuarioService {
 
     }
 
+
     public Usuario registrar(RegistroUsuarioDTO dto) {
 
         Optional<Usuario> existente = usuarioRepository.findByTelefono(dto.getTelefono());

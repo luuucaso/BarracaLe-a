@@ -17,7 +17,7 @@ import java.util.List;
 public class Estado {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private Long id;
 
     @Column(name = "estado")
     private String estado;

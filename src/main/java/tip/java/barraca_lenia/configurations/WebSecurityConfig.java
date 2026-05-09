@@ -27,6 +27,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/borrarRol/**").permitAll()
                         .requestMatchers("/actualizarRol/**").permitAll()
                         .requestMatchers("/listarRoles/**").permitAll()
+                        .requestMatchers("/crearPedido/**").permitAll()
+                        .requestMatchers("/listarPedidos/**").permitAll()
+                        .requestMatchers("/actualizarPedido/**").permitAll()
+                        .requestMatchers("/borrarPedido/**").permitAll()
                         .anyRequest().permitAll()
                 );
 

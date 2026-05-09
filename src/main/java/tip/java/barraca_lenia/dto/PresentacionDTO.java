@@ -20,7 +20,7 @@ public class PresentacionDTO {
     private String descripcion;
     private Integer cantidad;
     private String unidadMedida;
-    private BigDecimal precio;
+    private Float precio;
     private Long idProducto;
 
 

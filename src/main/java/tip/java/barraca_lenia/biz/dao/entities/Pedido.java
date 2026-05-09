@@ -9,6 +9,7 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,23 +23,26 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id_pedido")
-    private Long id;
+    private Integer id;
 
     @Column(name = "fecha_pedido")
     private LocalDateTime fechaPedido;
 
-    @Column(name="fecha_hora_entrega")
-    private LocalDateTime fechaHoraEntrega;
+    @Column(name="fecha_entrega")
+    private LocalDateTime fechaEntrega;
+
+    @Column(name="horario_entrega")
+    private String horarioEntrega;
 
     @Column(name="precio_total")
-    private BigDecimal precioTotal;
+    private Float precioTotal;
 
     @ManyToOne
     @JoinColumn(name = "id_cliente_anonimo")
     private ClienteAnonimo clienteAnonimo;
 
-    @OneToMany(mappedBy = "pedido")
-    private List<DetallePedido> detallePedidos;
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetallePedido> detallePedidos = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "id_estado")

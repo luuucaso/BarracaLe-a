@@ -20,7 +20,7 @@ public class Direccion {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id_direccion")
-    private Integer id;
+    private Long id;
 
     @Column(name = "calle")
     private String calle;
