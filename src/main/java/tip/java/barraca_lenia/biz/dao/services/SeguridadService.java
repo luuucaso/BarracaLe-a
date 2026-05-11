@@ -47,7 +47,7 @@ public class SeguridadService {
                                 .map(g->g.getAuthority())
                                 .collect(Collectors.toList()))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+300000))
+                .setExpiration(new Date(System.currentTimeMillis()+300000000))
                 .signWith(SignatureAlgorithm.HS256, clave.getBytes())
                 .compact();
 
