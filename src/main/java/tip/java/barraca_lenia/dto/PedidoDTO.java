@@ -1,5 +1,6 @@
 package tip.java.barraca_lenia.dto;
 
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,13 @@ public class PedidoDTO {
     private Long idUsuario;
     private Long idDireccion;
     private Long idEstado;
+
+    private String nombreCliente;
+    private String estado;
+
+    private String calle;
+    private Integer numeroCasa;
+    private String referencia;
 
     private List<DetalleDTO> detalles;
 }
