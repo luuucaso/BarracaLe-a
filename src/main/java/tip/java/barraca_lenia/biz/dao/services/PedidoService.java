@@ -76,7 +76,7 @@ public class PedidoService {
     public List<PedidoDTO> listarPedidos() {
         return pedidoRepository.findAll()
                 .stream()
-                .map(this::mapeo)
+                .map(this::mapeoListarPedido)
                 .toList();
     }
 
@@ -127,6 +127,90 @@ public class PedidoService {
         return dto;
     }
 
+    private PedidoDTO mapeoListarPedido(Pedido pedido) {
+        PedidoDTO dto = new PedidoDTO();
+
+        dto.setIdPedido(pedido.getId());
+        dto.setFechaPedido(pedido.getFechaPedido());
+        dto.setFechaEntrega(pedido.getFechaEntrega());
+        dto.setHorarioEntrega(pedido.getHorarioEntrega());
+        dto.setPrecioTotal(pedido.getPrecioTotal());
+
+        // Cliente
+        if (pedido.getUsuario() != null) {
+            dto.setNombreCliente(
+                    pedido.getUsuario().getNombre()
+            );
+        }
+
+        // Dirección
+        if (pedido.getDireccion() != null) {
+            dto.setCalle(
+                    pedido.getDireccion().getCalle()
+            );
+            dto.setNumeroCasa(
+                    pedido.getDireccion().getNumeroCasa()
+            );
+            dto.setReferencia(
+                    pedido.getDireccion().getReferencia()
+            );
+        }
+
+        // Estado
+        if (pedido.getEstado() != null) {
+            dto.setEstado(
+                    pedido.getEstado().getEstado()
+            );
+        }
+
+        // Detalles
+        if (pedido.getDetallePedidos() != null) {
+
+            List<DetalleDTO> detallesDTO = pedido.getDetallePedidos()
+                    .stream()
+                    .map(detalle -> {
+
+                        DetalleDTO detalleDTO = new DetalleDTO();
+
+                        detalleDTO.setIdDetalle(detalle.getId());
+                        detalleDTO.setCantidad(detalle.getCantidad());
+                        detalleDTO.setSubtotal(detalle.getSubtotal());
+
+                        // Presentación
+                        if (detalle.getPresentacion() != null) {
+
+                            detalleDTO.setIdPresentacion(
+                                    detalle.getPresentacion().getId()
+                            );
+
+                            detalleDTO.setNombrePresentacion(
+                                    detalle.getPresentacion().getDescripcion()
+                            );
+
+                            detalleDTO.setSubtotal(
+                                    detalle.getSubtotal()
+                            );
+
+                            // Producto
+                            if (detalle.getPresentacion().getProducto() != null) {
+
+                                detalleDTO.setNombreProducto(
+                                        detalle.getPresentacion()
+                                                .getProducto()
+                                                .getNombre()
+                                );
+                            }
+                        }
+
+                        return detalleDTO;
+                    })
+                    .toList();
+
+            dto.setDetalles(detallesDTO);
+        }
+
+        return dto;
+    }
 
 
 }

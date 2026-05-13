@@ -13,5 +13,7 @@ public class DetalleDTO {
 
     private Integer cantidad;
     private Float subtotal;
+    private String nombrePresentacion;
+    private String nombreProducto;
 
 }
