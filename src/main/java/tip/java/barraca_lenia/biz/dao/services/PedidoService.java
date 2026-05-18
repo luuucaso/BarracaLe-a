@@ -110,6 +110,23 @@ public class PedidoService {
         return mapeo(actualizado);
     }
 
+    //Actualizar estado pedido
+    public PedidoDTO actualizarEstadoPedido(Long idPedido, PedidoDTO dto) {
+
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+
+
+        Estado estado = estadoRepository.findById(dto.getIdEstado())
+                .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+
+        pedido.setEstado(estado);
+
+        Pedido actualizado = pedidoRepository.save(pedido);
+
+        return mapeo(actualizado);
+    }
+
 
     private PedidoDTO mapeo(Pedido pedido) {
         PedidoDTO dto = new PedidoDTO();
