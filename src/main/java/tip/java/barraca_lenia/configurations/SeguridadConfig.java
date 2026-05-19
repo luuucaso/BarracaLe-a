@@ -45,8 +45,9 @@ public class SeguridadConfig extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
+            // Token inválido: seguir como anónimo (permite GET públicos sin login)
             SecurityContextHolder.clearContext();
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o expirado");
+            filterChain.doFilter(request, response);
         }
     }
 

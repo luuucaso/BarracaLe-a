@@ -30,10 +30,11 @@ public class WebSecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(seguridadConfig, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/seguridad/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuario/registrarUsuario").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/producto/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/presentacion/**").permitAll()
+                        // TEMPORAL: todos los GET públicos (catálogo, presentaciones, productos, etc.)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
                         .requestMatchers("/cliente-anonimo/**").permitAll()
                         .requestMatchers("/api/v1/pedidos/**").hasAnyAuthority("ADMIN", "Administrador")
                         .requestMatchers("/api/v1/estados/**").hasAnyAuthority("ADMIN", "Administrador")
