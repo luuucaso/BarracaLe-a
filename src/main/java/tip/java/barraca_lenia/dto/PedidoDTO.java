@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,8 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PedidoDTO {
     private Integer idPedido;
-    private LocalDateTime fechaPedido;
-    private LocalDateTime fechaEntrega;
+    private LocalDate fechaPedido;
+    private LocalDate fechaEntrega;
     private String horarioEntrega;
     private Float precioTotal;
 

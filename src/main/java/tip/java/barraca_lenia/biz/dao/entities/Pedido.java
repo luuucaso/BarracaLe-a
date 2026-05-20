@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,10 @@ public class Pedido {
     private Integer id;
 
     @Column(name = "fecha_pedido")
-    private LocalDateTime fechaPedido;
+    private LocalDate fechaPedido;
 
     @Column(name="fecha_entrega")
-    private LocalDateTime fechaEntrega;
+    private LocalDate fechaEntrega;
 
     @Column(name="horario_entrega")
     private String horarioEntrega;

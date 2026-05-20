@@ -7,6 +7,7 @@ import tip.java.barraca_lenia.biz.dao.repositories.*;
 import tip.java.barraca_lenia.dto.DetalleDTO;
 import tip.java.barraca_lenia.dto.PedidoDTO;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class PedidoService {
                 .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
 
         Pedido pedido = new Pedido();
-        pedido.setFechaPedido(LocalDateTime.now());
+        pedido.setFechaPedido(LocalDate.now());
         pedido.setFechaEntrega(dto.getFechaEntrega());
         pedido.setHorarioEntrega(dto.getHorarioEntrega());
         pedido.setUsuario(usuario);
@@ -178,6 +179,9 @@ public class PedidoService {
             dto.setEstado(
                     pedido.getEstado().getEstado()
             );
+            dto.setIdEstado(
+                    pedido.getEstado().getId()
+            );
         }
 
         // Detalles
@@ -202,6 +206,9 @@ public class PedidoService {
 
                             detalleDTO.setNombrePresentacion(
                                     detalle.getPresentacion().getDescripcion()
+                            );
+                            detalleDTO.setCantidadPresentacion(
+                                    detalle.getPresentacion().getCantidad()
                             );
 
                             detalleDTO.setSubtotal(
