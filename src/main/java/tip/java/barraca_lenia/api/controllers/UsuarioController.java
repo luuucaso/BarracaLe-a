@@ -28,7 +28,6 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-
     //registrar
     @PostMapping("/registrarUsuario")
     public Usuario registrar(@RequestBody RegistroUsuarioDTO dto) {

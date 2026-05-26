@@ -29,7 +29,6 @@ public class ImagenProducto {
     @Column(name = "extension")
     private String extension;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String imagen;
 
@@ -39,6 +38,10 @@ public class ImagenProducto {
     @ManyToOne
     @JoinColumn(name = "id_producto")
     private Producto producto;
+
+    @ManyToOne
+    @JoinColumn(name = "id_presentacion")
+    private Presentacion presentacion;
 
 }
 

@@ -2,6 +2,7 @@ package tip.java.barraca_lenia.biz.dao.services;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tip.java.barraca_lenia.biz.dao.entities.Presentacion;
 import tip.java.barraca_lenia.biz.dao.entities.Producto;
@@ -80,20 +81,39 @@ public class PresentacionService {
 
     }
 
+    @Cacheable("presentaciones_todas")
     public List<PresentacionDTO> listarPresentacion() {
-        return presentacionRepository.findAll().stream().map(presentacion->{
-            PresentacionDTO p = new PresentacionDTO();
-            p.setId(presentacion.getId());
-            p.setDescripcion(presentacion.getDescripcion());
-            p.setCantidad(presentacion.getCantidad());
-            p.setPrecio(presentacion.getPrecio());
-            p.setUnidadMedida(presentacion.getUnidadMedida());
-            p.setIdProducto(presentacion.getProducto().getId());
-            return p;
-        }).toList();
-
+        return presentacionRepository.findAllConProducto()
+                .stream()
+                .map(presentacion -> {
+                    PresentacionDTO p = new PresentacionDTO();
+                    p.setId(presentacion.getId());
+                    p.setDescripcion(presentacion.getDescripcion());
+                    p.setCantidad(presentacion.getCantidad());
+                    p.setPrecio(presentacion.getPrecio());
+                    p.setUnidadMedida(presentacion.getUnidadMedida());
+                    p.setIdProducto(presentacion.getProducto().getId());
+                    return p;
+                })
+                .toList();
     }
 
+    @Cacheable("presentaciones_ultimas4")
+    public List<PresentacionDTO> listarPresentacionNuevas() {
+        return presentacionRepository.findTop4ByOrderByIdDesc()
+                .stream()
+                .map(presentacion -> {
+                    PresentacionDTO p = new PresentacionDTO();
+                    p.setId(presentacion.getId());
+                    p.setDescripcion(presentacion.getDescripcion());
+                    p.setCantidad(presentacion.getCantidad());
+                    p.setPrecio(presentacion.getPrecio());
+                    p.setUnidadMedida(presentacion.getUnidadMedida());
+                    p.setIdProducto(presentacion.getProducto().getId());
+                    return p;
+                })
+                .toList();
+    }
     private PresentacionDTO mapeo(Presentacion presentacion) {
         PresentacionDTO presentacionDTO = new PresentacionDTO();
         presentacionDTO.setId(presentacion.getId());

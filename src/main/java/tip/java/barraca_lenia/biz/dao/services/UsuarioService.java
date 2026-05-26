@@ -42,6 +42,8 @@ public class UsuarioService {
             return mapeo(guardado);
 
     }
+
+
     public Usuario registrar(RegistroUsuarioDTO dto) {
 
         Optional<Usuario> existente = usuarioRepository.findByTelefono(dto.getTelefono());

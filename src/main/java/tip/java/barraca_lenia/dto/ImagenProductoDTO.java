@@ -1,27 +1,23 @@
 package tip.java.barraca_lenia.dto;
 
-
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
 
-public class PresentacionDTO {
+public class ImagenProductoDTO {
 
     private Long id;
-    private String descripcion;
-    private Integer cantidad;
-    private String unidadMedida;
-    private Float precio;
+    private String nombre;
+    private String extension;
+    private String imagen;
+    private Boolean esPrincipal;
     private Long idProducto;
-
+    private Long idPresentacion;
 
 }
