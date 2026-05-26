@@ -33,6 +33,10 @@ public class PresentacionController {
     public List<PresentacionDTO> listarPresentacion(){
         return presentacionService.listarPresentacion();
     }
+    @GetMapping("/listarPresentacionUltimas4Nuevas")
+    public List<PresentacionDTO> listarPresentacionUltimas4Nuevas(){
+        return presentacionService.listarPresentacionNuevas();
+    }
 
     @DeleteMapping("/eliminarPresentacion/{id}")
     public ResponseEntity<Void> eliminarPresentacion(@PathVariable Long id) {
