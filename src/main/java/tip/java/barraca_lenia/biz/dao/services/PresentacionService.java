@@ -2,6 +2,7 @@ package tip.java.barraca_lenia.biz.dao.services;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tip.java.barraca_lenia.biz.dao.entities.Presentacion;
 import tip.java.barraca_lenia.biz.dao.entities.Producto;
@@ -80,6 +81,7 @@ public class PresentacionService {
 
     }
 
+    @Cacheable("presentaciones_todas")
     public List<PresentacionDTO> listarPresentacion() {
         return presentacionRepository.findAllConProducto()
                 .stream()
@@ -96,6 +98,7 @@ public class PresentacionService {
                 .toList();
     }
 
+    @Cacheable("presentaciones_ultimas4")
     public List<PresentacionDTO> listarPresentacionNuevas() {
         return presentacionRepository.findTop4ByOrderByIdDesc()
                 .stream()
