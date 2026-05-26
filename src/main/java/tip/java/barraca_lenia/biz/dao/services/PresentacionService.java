@@ -81,17 +81,19 @@ public class PresentacionService {
     }
 
     public List<PresentacionDTO> listarPresentacion() {
-        return presentacionRepository.findAll().stream().map(presentacion->{
-            PresentacionDTO p = new PresentacionDTO();
-            p.setId(presentacion.getId());
-            p.setDescripcion(presentacion.getDescripcion());
-            p.setCantidad(presentacion.getCantidad());
-            p.setPrecio(presentacion.getPrecio());
-            p.setUnidadMedida(presentacion.getUnidadMedida());
-            p.setIdProducto(presentacion.getProducto().getId());
-            return p;
-        }).toList();
-
+        return presentacionRepository.findAllConProducto()
+                .stream()
+                .map(presentacion -> {
+                    PresentacionDTO p = new PresentacionDTO();
+                    p.setId(presentacion.getId());
+                    p.setDescripcion(presentacion.getDescripcion());
+                    p.setCantidad(presentacion.getCantidad());
+                    p.setPrecio(presentacion.getPrecio());
+                    p.setUnidadMedida(presentacion.getUnidadMedida());
+                    p.setIdProducto(presentacion.getProducto().getId());
+                    return p;
+                })
+                .toList();
     }
 
     private PresentacionDTO mapeo(Presentacion presentacion) {
