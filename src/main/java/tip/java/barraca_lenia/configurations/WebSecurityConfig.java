@@ -40,6 +40,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/estados/**").hasAnyAuthority("ADMIN", "Administrador")
                         .requestMatchers("/api/v1/usuario/**").hasAnyAuthority("ADMIN", "Administrador")
                         .requestMatchers("/api/v1/rol/**").hasAnyAuthority("ADMIN", "Administrador")
+                        .requestMatchers("/api/v1/imagenProducto/**").hasAnyAuthority("ADMIN", "Administrador")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
