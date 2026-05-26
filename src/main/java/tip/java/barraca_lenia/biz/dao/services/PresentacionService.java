@@ -96,6 +96,21 @@ public class PresentacionService {
                 .toList();
     }
 
+    public List<PresentacionDTO> listarPresentacionNuevas() {
+        return presentacionRepository.findTop4ByOrderByIdDesc()
+                .stream()
+                .map(presentacion -> {
+                    PresentacionDTO p = new PresentacionDTO();
+                    p.setId(presentacion.getId());
+                    p.setDescripcion(presentacion.getDescripcion());
+                    p.setCantidad(presentacion.getCantidad());
+                    p.setPrecio(presentacion.getPrecio());
+                    p.setUnidadMedida(presentacion.getUnidadMedida());
+                    p.setIdProducto(presentacion.getProducto().getId());
+                    return p;
+                })
+                .toList();
+    }
     private PresentacionDTO mapeo(Presentacion presentacion) {
         PresentacionDTO presentacionDTO = new PresentacionDTO();
         presentacionDTO.setId(presentacion.getId());
