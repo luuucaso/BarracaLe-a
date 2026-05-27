@@ -44,6 +44,7 @@ public class SeguridadService {
         respuesta.setNombre(usuario.getNombre());
         respuesta.setTelefono(usuario.getTelefono());
         respuesta.setRoles(obtenerRoles(usuario));
+        respuesta.setIdUsuario(usuario.getId());
         return respuesta;
     }
 

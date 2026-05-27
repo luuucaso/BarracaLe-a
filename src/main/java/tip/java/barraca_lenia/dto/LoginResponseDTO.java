@@ -12,4 +12,5 @@ public class LoginResponseDTO {
     private String nombre;
     private String telefono;
     private List<String> roles;
+    private Long idUsuario;
 }
