@@ -32,4 +32,6 @@ public class PedidoDTO {
     private String referencia;
 
     private List<DetalleDTO> detalles;
+
+    private ClienteAnonimoDTO clienteAnonimo;
 }

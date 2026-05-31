@@ -38,7 +38,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/cliente-anonimo/**").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/pedidos/crearPedido")
-                        .authenticated()
+                        .permitAll()
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/v1/direcciones/**"

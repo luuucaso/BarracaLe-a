@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import tip.java.barraca_lenia.biz.dao.entities.*;
 import tip.java.barraca_lenia.biz.dao.repositories.*;
+import tip.java.barraca_lenia.dto.ClienteAnonimoDTO;
 import tip.java.barraca_lenia.dto.DetalleDTO;
 import tip.java.barraca_lenia.dto.PedidoDTO;
 
@@ -21,10 +22,20 @@ public class PedidoService {
     private final DireccionRepository direccionRepository;
     private final EstadoRepository estadoRepository;
     private final PresentacionRepository presentacionRepository;
+    private final ClienteAnonimoService clienteAnonimoService;
 
 
     //crear pedido
-    public PedidoDTO crearPedido(PedidoDTO dto) {
+    public PedidoDTO crearPedido(PedidoDTO dto, String tokenClienteAnonimo) {
+
+        if (dto.getClienteAnonimo() != null) {
+            return crearPedidoAnonimo(dto, tokenClienteAnonimo);
+        }
+
+        return crearPedidoUsuario(dto);
+    }
+
+    private PedidoDTO crearPedidoUsuario(PedidoDTO dto) {
 
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -43,10 +54,42 @@ public class PedidoService {
         pedido.setDireccion(direccion);
         pedido.setEstado(estado);
 
+        return guardarPedidoConDetalles(pedido, dto.getDetalles());
+    }
+
+    private PedidoDTO crearPedidoAnonimo(PedidoDTO dto, String tokenClienteAnonimo) {
+
+        ClienteAnonimoDTO datosCliente = dto.getClienteAnonimo();
+
+        if (datosCliente.getNombre() == null || datosCliente.getNombre().isBlank()
+                || datosCliente.getTelefono() == null || datosCliente.getTelefono().isBlank()
+                || datosCliente.getCalle() == null || datosCliente.getCalle().isBlank()
+                || datosCliente.getNumeroCasa() == null || datosCliente.getNumeroCasa().isBlank()) {
+            throw new RuntimeException("Faltan datos del cliente anónimo");
+        }
+
+        ClienteAnonimo clienteAnonimo =
+                clienteAnonimoService.actualizarDatos(tokenClienteAnonimo, datosCliente);
+
+        Estado estado = estadoRepository.findById(dto.getIdEstado())
+                .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+
+        Pedido pedido = new Pedido();
+        pedido.setFechaPedido(LocalDate.now());
+        pedido.setFechaEntrega(dto.getFechaEntrega());
+        pedido.setHorarioEntrega(dto.getHorarioEntrega());
+        pedido.setClienteAnonimo(clienteAnonimo);
+        pedido.setEstado(estado);
+
+        return guardarPedidoConDetalles(pedido, dto.getDetalles());
+    }
+
+    private PedidoDTO guardarPedidoConDetalles(Pedido pedido, List<DetalleDTO> detallesDTO) {
+
         List<DetallePedido> detalles = new ArrayList<>();
         float total = 0;
 
-        for (DetalleDTO detalleDTO : dto.getDetalles()) {
+        for (DetalleDTO detalleDTO : detallesDTO) {
 
             Presentacion presentacion = presentacionRepository.findById(detalleDTO.getIdPresentacion())
                     .orElseThrow(() -> new RuntimeException("Presentación no encontrada"));
@@ -138,9 +181,17 @@ public class PedidoService {
         dto.setHorarioEntrega(pedido.getHorarioEntrega());
         dto.setPrecioTotal(pedido.getPrecioTotal());
 
-        dto.setIdUsuario(pedido.getUsuario().getId());
-        dto.setIdDireccion(pedido.getDireccion().getId());
-        dto.setIdEstado(pedido.getEstado().getId());
+        if (pedido.getUsuario() != null) {
+            dto.setIdUsuario(pedido.getUsuario().getId());
+        }
+
+        if (pedido.getDireccion() != null) {
+            dto.setIdDireccion(pedido.getDireccion().getId());
+        }
+
+        if (pedido.getEstado() != null) {
+            dto.setIdEstado(pedido.getEstado().getId());
+        }
 
         return dto;
     }
@@ -159,6 +210,16 @@ public class PedidoService {
             dto.setNombreCliente(
                     pedido.getUsuario().getNombre()
             );
+        } else if (pedido.getClienteAnonimo() != null) {
+            dto.setNombreCliente(pedido.getClienteAnonimo().getNombre());
+            dto.setCalle(pedido.getClienteAnonimo().getCalle());
+            try {
+                dto.setNumeroCasa(
+                        Integer.parseInt(pedido.getClienteAnonimo().getNumeroCasa())
+                );
+            } catch (NumberFormatException ignored) {
+            }
+            dto.setReferencia(pedido.getClienteAnonimo().getReferencia());
         }
 
         // Dirección

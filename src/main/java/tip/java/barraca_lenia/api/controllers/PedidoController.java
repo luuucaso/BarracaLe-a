@@ -16,8 +16,11 @@ public class PedidoController {
     private final PedidoService pedidoService;
 
     @PostMapping("/crearPedido")
-    public ResponseEntity<PedidoDTO> crearPedido(@RequestBody PedidoDTO dto) {
-        return ResponseEntity.ok(pedidoService.crearPedido(dto));
+    public ResponseEntity<PedidoDTO> crearPedido(
+            @RequestBody PedidoDTO dto,
+            @CookieValue(value = "cliente_token", required = false) String tokenCliente
+    ) {
+        return ResponseEntity.ok(pedidoService.crearPedido(dto, tokenCliente));
     }
 
     @GetMapping("/listarPedidos")

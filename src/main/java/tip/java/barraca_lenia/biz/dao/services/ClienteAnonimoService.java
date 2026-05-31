@@ -32,9 +32,24 @@ public class ClienteAnonimoService {
 
         return clienteAnonimoRepository.save(nuevoCliente);
     }
+
+    public ClienteAnonimo actualizarDatos(String token, ClienteAnonimoDTO datos) {
+        ClienteAnonimo cliente = buscarOrCrearClienteAnonimo(token);
+
+        cliente.setNombre(datos.getNombre());
+        cliente.setTelefono(datos.getTelefono());
+        cliente.setCalle(datos.getCalle());
+        cliente.setNumeroCasa(datos.getNumeroCasa());
+        cliente.setReferencia(datos.getReferencia());
+
+        return clienteAnonimoRepository.save(cliente);
+    }
+
     public ClienteAnonimoDTO mapeo(ClienteAnonimo cliente) {
         ClienteAnonimoDTO dto = new ClienteAnonimoDTO();
 
+        dto.setId(cliente.getId());
+        dto.setToken(cliente.getToken());
         dto.setNombre(cliente.getNombre());
         dto.setTelefono(cliente.getTelefono());
         dto.setCalle(cliente.getCalle());

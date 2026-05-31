@@ -17,6 +17,7 @@ import java.util.List;
 public class ClienteAnonimoDTO {
 
     private Long id;
+    private String token;
     private String nombre;
     private String telefono;
     private String calle;
