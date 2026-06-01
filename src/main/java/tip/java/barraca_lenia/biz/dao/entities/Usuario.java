@@ -1,6 +1,7 @@
 package tip.java.barraca_lenia.biz.dao.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +35,13 @@ public class Usuario {
     @Column(name = "rut")
     private String rut;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario")
     private List<Pedido> pedidos;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario")
-    private List<RolUsuario> rolUsuarios ;
+    private List<RolUsuario> rolUsuarios;
 
 
 }

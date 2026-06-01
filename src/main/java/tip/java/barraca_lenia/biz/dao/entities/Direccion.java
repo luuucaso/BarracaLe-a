@@ -1,6 +1,6 @@
 package tip.java.barraca_lenia.biz.dao.entities;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +31,14 @@ public class Direccion {
     @Column(name = "referencia")
     private String referencia;
 
-    @Column(name = "Alias")
+    @Column(name = "alias")
     private String alias;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "direccion")
     private List<Pedido> pedidos;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;

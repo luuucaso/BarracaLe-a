@@ -1,9 +1,10 @@
 package tip.java.barraca_lenia.api.controllers;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tip.java.barraca_lenia.biz.dao.entities.ClienteAnonimo;
@@ -26,12 +27,14 @@ public class ClienteAnonimoController {
         ClienteAnonimo cliente = clienteAnonimoService.buscarOrCrearClienteAnonimo(token);
 
         if (token == null) {
-            Cookie cookie = new Cookie("cliente_token", cliente.getToken());
-            cookie.setPath("/");
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(60 * 60 * 24 * 30);
+            ResponseCookie cookie = ResponseCookie.from("cliente_token", cliente.getToken())
+                    .path("/")
+                    .httpOnly(true)
+                    .maxAge(60 * 60 * 24 * 30)
+                    .sameSite("Lax")
+                    .build();
 
-            response.addCookie(cookie);
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
 
         ClienteAnonimoDTO dto = clienteAnonimoService.mapeo(cliente);
