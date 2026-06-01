@@ -38,7 +38,7 @@ public class Pedido {
     @Column(name="precio_total")
     private Float precioTotal;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_cliente_anonimo")
     private ClienteAnonimo clienteAnonimo;
 

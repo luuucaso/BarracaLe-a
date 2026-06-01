@@ -68,8 +68,13 @@ public class PedidoService {
             throw new RuntimeException("Faltan datos del cliente anónimo");
         }
 
-        ClienteAnonimo clienteAnonimo =
-                clienteAnonimoService.actualizarDatos(tokenClienteAnonimo, datosCliente);
+        ClienteAnonimo clienteAnonimo = new ClienteAnonimo();
+        clienteAnonimo.setNombre(datosCliente.getNombre());
+        clienteAnonimo.setTelefono(datosCliente.getTelefono());
+        clienteAnonimo.setCalle(datosCliente.getCalle());
+        clienteAnonimo.setNumeroCasa(datosCliente.getNumeroCasa());
+        clienteAnonimo.setReferencia(datosCliente.getReferencia());
+        clienteAnonimo.setToken(tokenClienteAnonimo);
 
         Estado estado = estadoRepository.findById(dto.getIdEstado())
                 .orElseThrow(() -> new RuntimeException("Estado no encontrado"));

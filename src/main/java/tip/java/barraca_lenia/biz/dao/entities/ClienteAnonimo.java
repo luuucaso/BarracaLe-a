@@ -23,7 +23,7 @@ public class ClienteAnonimo {
     private Long id;
 
     //ver si ponerlo o no, c
-    @Column(name ="token",unique=true)
+    @Column(name ="token")
     private String token;
 
     @Column(name="nombre")
