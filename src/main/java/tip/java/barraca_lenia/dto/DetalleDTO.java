@@ -16,5 +16,6 @@ public class DetalleDTO {
     private String nombrePresentacion;
     private String nombreProducto;
     private Integer cantidadPresentacion;
+    private String tipoUso;
 
 }

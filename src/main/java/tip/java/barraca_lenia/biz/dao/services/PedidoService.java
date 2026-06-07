@@ -103,6 +103,7 @@ public class PedidoService {
             detalle.setPedido(pedido);
             detalle.setPresentacion(presentacion);
             detalle.setCantidad(detalleDTO.getCantidad());
+            detalle.setTipoUso(detalleDTO.getTipoUso());
 
             float subtotal = presentacion.getPrecio() * detalleDTO.getCantidad();
 
@@ -262,6 +263,7 @@ public class PedidoService {
                         detalleDTO.setIdDetalle(detalle.getId());
                         detalleDTO.setCantidad(detalle.getCantidad());
                         detalleDTO.setSubtotal(detalle.getSubtotal());
+                        detalleDTO.setTipoUso(detalle.getTipoUso());
 
                         // Presentación
                         if (detalle.getPresentacion() != null) {

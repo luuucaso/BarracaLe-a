@@ -37,4 +37,7 @@ public class DetallePedido {
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
 
+    @Column(name = "tipo_uso")
+    private String tipoUso;
+
 }
