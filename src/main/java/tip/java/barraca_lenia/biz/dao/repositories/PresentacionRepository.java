@@ -16,5 +16,5 @@ public interface PresentacionRepository  extends JpaRepository<Presentacion,Long
     Optional<Presentacion> findByDescripcionAndProductoId(String descripcion, Long productoId);
     @Query("SELECT p FROM Presentacion p JOIN FETCH p.producto")
     List<Presentacion> findAllConProducto();
-    List<Presentacion> findTop4ByOrderByIdDesc();
+    List<Presentacion> findTop3ByOrderByIdDesc();
 }

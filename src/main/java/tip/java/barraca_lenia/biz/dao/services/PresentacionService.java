@@ -100,7 +100,7 @@ public class PresentacionService {
 
     @Cacheable("presentaciones_ultimas4")
     public List<PresentacionDTO> listarPresentacionNuevas() {
-        return presentacionRepository.findTop4ByOrderByIdDesc()
+        return presentacionRepository.findTop3ByOrderByIdDesc()
                 .stream()
                 .map(presentacion -> {
                     PresentacionDTO p = new PresentacionDTO();

@@ -216,8 +216,10 @@ public class PedidoService {
             dto.setNombreCliente(
                     pedido.getUsuario().getNombre()
             );
+            dto.setTelefonoCliente(pedido.getUsuario().getTelefono());
         } else if (pedido.getClienteAnonimo() != null) {
             dto.setNombreCliente(pedido.getClienteAnonimo().getNombre());
+            dto.setTelefonoCliente(pedido.getClienteAnonimo().getTelefono());
             dto.setCalle(pedido.getClienteAnonimo().getCalle());
             try {
                 dto.setNumeroCasa(

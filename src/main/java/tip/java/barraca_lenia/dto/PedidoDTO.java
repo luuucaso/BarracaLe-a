@@ -25,6 +25,7 @@ public class PedidoDTO {
     private Long idEstado;
 
     private String nombreCliente;
+    private String telefonoCliente;
     private String estado;
 
     private String calle;
