@@ -1,18 +1,23 @@
 package tip.java.barraca_lenia.biz.dao.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import tip.java.barraca_lenia.biz.dao.entities.*;
 import tip.java.barraca_lenia.biz.dao.repositories.*;
 import tip.java.barraca_lenia.dto.ClienteAnonimoDTO;
 import tip.java.barraca_lenia.dto.DetalleDTO;
+import tip.java.barraca_lenia.dto.EstadisticasDTO;
 import tip.java.barraca_lenia.dto.PedidoDTO;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.time.YearMonth;
+import java.util.*;
+import java.util.stream.Collectors;
+@EnableCaching
 @Service
 @AllArgsConstructor
 public class PedidoService {
@@ -35,6 +40,7 @@ public class PedidoService {
         return crearPedidoUsuario(dto);
     }
 
+    @CacheEvict(value = "estadisticas", allEntries = true)
     private PedidoDTO crearPedidoUsuario(PedidoDTO dto) {
 
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
@@ -57,6 +63,7 @@ public class PedidoService {
         return guardarPedidoConDetalles(pedido, dto.getDetalles());
     }
 
+    @CacheEvict(value = "estadisticas", allEntries = true)
     private PedidoDTO crearPedidoAnonimo(PedidoDTO dto, String tokenClienteAnonimo) {
 
         ClienteAnonimoDTO datosCliente = dto.getClienteAnonimo();
@@ -311,6 +318,165 @@ public class PedidoService {
         }
 
         return dto;
+    }
+
+    @Cacheable("estadisticas")
+    public EstadisticasDTO obtenerEstadisticas() {
+        EstadisticasDTO estadisticas = new EstadisticasDTO();
+
+        estadisticas.setVentasMensuales(obtenerVentasMensuales());
+        estadisticas.setProductosMasVendidos(obtenerProductosMasVendidos());
+        estadisticas.setClientesTop(obtenerClientesTop());
+        estadisticas.setComparacionVentas(obtenerComparacionVentas());
+
+        return estadisticas;
+    }
+
+    private List<EstadisticasDTO.VentaMensualDTO> obtenerVentasMensuales() {
+        List<Pedido> pedidos = pedidoRepository.findAll();
+
+        Map<String, Double> ventasPorMes = pedidos.stream()
+                .filter(p -> p.getFechaPedido() != null)
+                .collect(Collectors.groupingBy(
+                        p -> YearMonth.from(p.getFechaPedido()).toString(),
+                        Collectors.summingDouble(Pedido::getPrecioTotal)
+                ));
+
+        List<EstadisticasDTO.VentaMensualDTO> resultado = new ArrayList<>();
+        for (Map.Entry<String, Double> entry : ventasPorMes.entrySet()) {
+            resultado.add(new EstadisticasDTO.VentaMensualDTO(entry.getKey(), entry.getValue()));
+        }
+
+        return resultado.stream()
+                .sorted(Comparator.comparing(EstadisticasDTO.VentaMensualDTO::getMes).reversed())
+                .limit(6)
+                .sorted(Comparator.comparing(EstadisticasDTO.VentaMensualDTO::getMes))
+                .toList();
+    }
+
+    private List<EstadisticasDTO.ProductoMasVendidoDTO> obtenerProductosMasVendidos() {
+
+        List<Pedido> pedidos = pedidoRepository.findAll();
+        Map<String, Integer> cantidadPorProducto = new HashMap<>();
+        Map<String, Double> ventasPorProducto = new HashMap<>();
+
+        for (Pedido pedido : pedidos) {
+            if (pedido.getDetallePedidos() != null) {
+                for (DetallePedido detalle : pedido.getDetallePedidos()) {
+
+                    if (detalle.getPresentacion() != null &&
+                            detalle.getPresentacion().getProducto() != null) {
+
+                        String nombreProducto =
+                                detalle.getPresentacion().getProducto().getNombre();
+
+                        cantidadPorProducto.put(
+                                nombreProducto,
+                                cantidadPorProducto.getOrDefault(nombreProducto, 0)
+                                        + detalle.getCantidad()
+                        );
+
+                        ventasPorProducto.put(
+                                nombreProducto,
+                                ventasPorProducto.getOrDefault(nombreProducto, 0.0)
+                                        + detalle.getSubtotal()
+                        );
+                    }
+                }
+            }
+        }
+
+        return cantidadPorProducto.entrySet()
+                .stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .limit(3)
+                .map(entry -> new EstadisticasDTO.ProductoMasVendidoDTO(
+                        entry.getKey(),
+                        entry.getValue(),
+                        ventasPorProducto.getOrDefault(entry.getKey(), 0.0)
+                ))
+                .toList();
+    }
+
+    private List<EstadisticasDTO.ClienteTopDTO> obtenerClientesTop() {
+        List<Pedido> pedidos = pedidoRepository.findAll();
+
+        Map<String, Integer> pedidosPorCliente = new HashMap<>();
+        Map<String, Double> gastadoPorCliente = new HashMap<>();
+        Map<String, String> nombrePorTelefono = new HashMap<>();
+
+        for (Pedido pedido : pedidos) {
+
+            String telefono;
+            String nombre;
+
+            if (pedido.getUsuario() != null) {
+                telefono = pedido.getUsuario().getTelefono();
+                nombre = pedido.getUsuario().getNombre();
+            } else if (pedido.getClienteAnonimo() != null) {
+                telefono = pedido.getClienteAnonimo().getTelefono();
+                nombre = pedido.getClienteAnonimo().getNombre();
+            } else {
+                continue;
+            }
+
+            nombrePorTelefono.put(telefono, nombre);
+
+            pedidosPorCliente.put(
+                    telefono,
+                    pedidosPorCliente.getOrDefault(telefono, 0) + 1
+            );
+
+            gastadoPorCliente.put(
+                    telefono,
+                    gastadoPorCliente.getOrDefault(telefono, 0.0) + pedido.getPrecioTotal()
+            );
+        }
+
+        return pedidosPorCliente.keySet().stream()
+                .map(telefono -> new EstadisticasDTO.ClienteTopDTO(
+                        nombrePorTelefono.get(telefono),
+                        pedidosPorCliente.get(telefono),
+                        gastadoPorCliente.get(telefono),
+                        telefono
+                ))
+                .sorted((a, b) -> Double.compare(
+                        b.getTotalGastado(),
+                        a.getTotalGastado()
+                ))
+                .limit(3)
+                .toList();
+    }
+
+    private List<EstadisticasDTO.ComparacionVentasDTO> obtenerComparacionVentas() {
+        List<Pedido> pedidos = pedidoRepository.findAll();
+
+        Map<String, Double> ventasPorMes = pedidos.stream()
+                .filter(p -> p.getFechaPedido() != null)
+                .collect(Collectors.groupingBy(
+                        p -> YearMonth.from(p.getFechaPedido()).toString(),
+                        Collectors.summingDouble(Pedido::getPrecioTotal)
+                ));
+
+        Map<String, Long> pedidosPorMes = pedidos.stream()
+                .filter(p -> p.getFechaPedido() != null)
+                .collect(Collectors.groupingBy(
+                        p -> YearMonth.from(p.getFechaPedido()).toString(),
+                        Collectors.counting()
+                ));
+
+        List<EstadisticasDTO.ComparacionVentasDTO> resultado = new ArrayList<>();
+        for (String mes : ventasPorMes.keySet()) {
+            resultado.add(new EstadisticasDTO.ComparacionVentasDTO(
+                    mes,
+                    ventasPorMes.get(mes),
+                    pedidosPorMes.get(mes).intValue()
+            ));
+        }
+
+        return resultado.stream()
+                .sorted(Comparator.comparing(EstadisticasDTO.ComparacionVentasDTO::getMes))
+                .collect(Collectors.toList());
     }
 
 
