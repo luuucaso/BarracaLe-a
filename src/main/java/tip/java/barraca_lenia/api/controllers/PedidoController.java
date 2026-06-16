@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tip.java.barraca_lenia.biz.dao.services.PedidoService;
+import tip.java.barraca_lenia.dto.EstadisticasDTO;
 import tip.java.barraca_lenia.dto.PedidoDTO;
 
 import java.util.List;
@@ -48,6 +49,11 @@ public class PedidoController {
     public ResponseEntity<Void> borrarPedido(@PathVariable Long idPedido) {
         pedidoService.borrarPedido(idPedido);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/estadisticas")
+    public ResponseEntity<EstadisticasDTO> obtenerEstadisticas() {
+        return ResponseEntity.ok(pedidoService.obtenerEstadisticas());
     }
 
 }
