@@ -2,6 +2,7 @@ package tip.java.barraca_lenia.biz.dao.services;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tip.java.barraca_lenia.biz.dao.entities.Presentacion;
@@ -20,6 +21,13 @@ public class PresentacionService {
     private final PresentacionRepository presentacionRepository;
     private final ProductoRepository productoRepository;
 
+    @CacheEvict(
+            value = {
+                    "presentaciones_todas",
+                    "presentaciones_ultimas4"
+            },
+            allEntries = true
+    )
     public PresentacionDTO crearPresentacion(PresentacionDTO presentacionDTO) {
 
         Optional<Presentacion> existente = presentacionRepository.findByDescripcionAndProductoId(presentacionDTO.getDescripcion(), presentacionDTO.getIdProducto());
@@ -46,6 +54,13 @@ public class PresentacionService {
 
     }
 
+    @CacheEvict(
+            value = {
+                    "presentaciones_todas",
+                    "presentaciones_ultimas4"
+            },
+            allEntries = true
+    )
     public void borrarPresentacion(Long id) {
 
         Optional<Presentacion> existente = presentacionRepository.findById(id);
@@ -57,6 +72,13 @@ public class PresentacionService {
 
     }
 
+    @CacheEvict(
+            value = {
+                    "presentaciones_todas",
+                    "presentaciones_ultimas4"
+            },
+            allEntries = true
+    )
     public PresentacionDTO actualizarPresentacion(PresentacionDTO presentacionDTO, Long id) {
         Optional<Presentacion> existente = presentacionRepository.findById(id);
 
