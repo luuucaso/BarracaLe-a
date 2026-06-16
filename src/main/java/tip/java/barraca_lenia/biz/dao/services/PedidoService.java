@@ -138,6 +138,13 @@ public class PedidoService {
         pedidoRepository.delete(pedido);
     }
 
+    public List<PedidoDTO> listarPedidosPorCliente(Long idUsuario) {
+        return pedidoRepository.findByUsuarioId(idUsuario)
+                .stream()
+                .map(this::mapeoListarPedido)
+                .toList();
+    }
+
     //Actualizar
     public PedidoDTO actualizarPedido(Long idPedido, PedidoDTO dto) {
 

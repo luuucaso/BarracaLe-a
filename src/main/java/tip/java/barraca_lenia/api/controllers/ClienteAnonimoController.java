@@ -24,6 +24,8 @@ public class ClienteAnonimoController {
             HttpServletResponse response
     ) {
 
+        System.out.println("TOKEN RECIBIDO: " + token);
+
         ClienteAnonimo cliente = clienteAnonimoService.buscarOrCrearClienteAnonimo(token);
 
         if (token == null) {

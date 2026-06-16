@@ -50,4 +50,9 @@ public class PedidoController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/listarPedidosCliente/{idUsuario}")
+    public List<PedidoDTO> listarPedidosPorCliente(@PathVariable Long idUsuario) {
+        return pedidoService.listarPedidosPorCliente(idUsuario);
+    }
+
 }
