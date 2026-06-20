@@ -320,14 +320,17 @@ public class PedidoService {
         return dto;
     }
 
+
     @Cacheable("estadisticas")
     public EstadisticasDTO obtenerEstadisticas() {
+
         EstadisticasDTO estadisticas = new EstadisticasDTO();
 
         estadisticas.setVentasMensuales(obtenerVentasMensuales());
         estadisticas.setProductosMasVendidos(obtenerProductosMasVendidos());
         estadisticas.setClientesTop(obtenerClientesTop());
         estadisticas.setComparacionVentas(obtenerComparacionVentas());
+        estadisticas.setVentasPorProductoMes(obtenerVentasPorProductoMes());
 
         return estadisticas;
     }
@@ -348,8 +351,6 @@ public class PedidoService {
         }
 
         return resultado.stream()
-                .sorted(Comparator.comparing(EstadisticasDTO.VentaMensualDTO::getMes).reversed())
-                .limit(6)
                 .sorted(Comparator.comparing(EstadisticasDTO.VentaMensualDTO::getMes))
                 .toList();
     }
@@ -389,7 +390,7 @@ public class PedidoService {
         return cantidadPorProducto.entrySet()
                 .stream()
                 .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                .limit(3)
+                .limit(10)
                 .map(entry -> new EstadisticasDTO.ProductoMasVendidoDTO(
                         entry.getKey(),
                         entry.getValue(),
@@ -444,7 +445,7 @@ public class PedidoService {
                         b.getTotalGastado(),
                         a.getTotalGastado()
                 ))
-                .limit(3)
+                .limit(10)
                 .toList();
     }
 
@@ -479,5 +480,64 @@ public class PedidoService {
                 .collect(Collectors.toList());
     }
 
+    private List<EstadisticasDTO.VentaProductoMesDTO> obtenerVentasPorProductoMes() {
 
+        List<Pedido> pedidos = pedidoRepository.findAll();
+
+        Map<String, Double> kilosPorProductoMes = new HashMap<>();
+
+        for (Pedido pedido : pedidos) {
+
+            if (pedido.getFechaPedido() == null || pedido.getDetallePedidos() == null) {
+                continue;
+            }
+
+            String mes = YearMonth.from(pedido.getFechaPedido()).toString();
+
+            for (DetallePedido detalle : pedido.getDetallePedidos()) {
+
+                if (detalle.getPresentacion() == null ||
+                        detalle.getPresentacion().getProducto() == null) {
+                    continue;
+                }
+
+                String producto = detalle
+                        .getPresentacion()
+                        .getProducto()
+                        .getNombre();
+
+                double kilosVendidos =
+                        detalle.getCantidad()
+                                * detalle.getPresentacion().getCantidad();
+
+                String clave = mes + "|" + producto;
+
+                kilosPorProductoMes.put(
+                        clave,
+                        kilosPorProductoMes.getOrDefault(clave, 0.0)
+                                + kilosVendidos
+                );
+            }
+        }
+
+        List<EstadisticasDTO.VentaProductoMesDTO> resultado = new ArrayList<>();
+
+        for (Map.Entry<String, Double> entry : kilosPorProductoMes.entrySet()) {
+
+            String[] partes = entry.getKey().split("\\|");
+
+            resultado.add(
+                    new EstadisticasDTO.VentaProductoMesDTO(
+                            partes[0], // mes
+                            partes[1], // producto
+                            entry.getValue() // kilos vendidos
+                    )
+            );
+        }
+
+        return resultado.stream()
+                .sorted(Comparator.comparing(
+                        EstadisticasDTO.VentaProductoMesDTO::getMes))
+                .toList();
+    }
 }

@@ -17,6 +17,7 @@ public class EstadisticasDTO {
     private List<ProductoMasVendidoDTO> productosMasVendidos;
     private List<ClienteTopDTO> clientesTop;
     private List<ComparacionVentasDTO> comparacionVentas;
+    private List<VentaProductoMesDTO> ventasPorProductoMes;
 
     @Getter
     @Setter
@@ -57,4 +58,15 @@ public class EstadisticasDTO {
         private Double totalVentas;
         private Integer cantidadPedidos;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VentaProductoMesDTO {
+        private String mes;
+        private String producto;
+        private Double kilosVendidos;
+    }
+
 }
