@@ -30,11 +30,11 @@ public class Producto {
     @Column(name = "descripcion")
     private String descripcion;
 
-    @Column(name = "tipo_uso")
-    private String tipoUso;
-
     @Column(name = "activo")
     private Boolean activo;
+
+    @Column(name = "usa_tipo_uso")
+    private Boolean usaTipoUso;
 
     @OneToMany(mappedBy = "producto")
     private List<ImagenProducto> imagenesProductos;

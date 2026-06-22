@@ -29,8 +29,8 @@ public class ProductoService {
 
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setTipoUso(productoDTO.getTipoUso());
         producto.setActivo(productoDTO.getActivo());
+        producto.setUsaTipoUso(productoDTO.getUsaTipoUso());
 
         Producto guardado = productoRepository.save(producto);
 
@@ -61,8 +61,8 @@ public class ProductoService {
 
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setTipoUso(productoDTO.getTipoUso());
         producto.setActivo(productoDTO.getActivo());
+        producto.setUsaTipoUso(productoDTO.getUsaTipoUso());
 
         Producto actualizado = productoRepository.save(producto);
         return mapeo(actualizado);
@@ -75,8 +75,8 @@ public class ProductoService {
             p.setId(producto.getId());
             p.setNombre(producto.getNombre());
             p.setDescripcion(producto.getDescripcion());
-            p.setTipoUso(producto.getTipoUso());
             p.setActivo(producto.getActivo());
+            p.setUsaTipoUso(producto.getUsaTipoUso());
             return p;
         }).toList();
 
@@ -88,7 +88,7 @@ public class ProductoService {
         productoDTO.setNombre(producto.getNombre());
         productoDTO.setActivo(producto.getActivo());
         productoDTO.setDescripcion(producto.getDescripcion());
-        productoDTO.setTipoUso(producto.getTipoUso());
+        productoDTO.setUsaTipoUso(producto.getUsaTipoUso());
         return productoDTO;
 
     }
