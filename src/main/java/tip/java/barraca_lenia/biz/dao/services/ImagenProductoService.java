@@ -64,6 +64,15 @@ public class ImagenProductoService {
                 .toList();
     }
 
+    public ImagenProductoDTO obtenerImagenPorPresentacion(Long idPresentacion) {
+
+        ImagenProducto imagen = imagenProductoRepository
+                .findFirstByPresentacionId(idPresentacion)
+                .orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
+
+        return mapeo(imagen);
+    }
+
     private ImagenProductoDTO mapeo(ImagenProducto imagenProducto) {
         ImagenProductoDTO imagenProductoDTO = new ImagenProductoDTO();
         imagenProductoDTO.setId(imagenProducto.getId());

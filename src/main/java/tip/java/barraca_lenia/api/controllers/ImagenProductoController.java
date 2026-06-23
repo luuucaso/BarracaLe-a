@@ -35,12 +35,15 @@ public class ImagenProductoController {
         return imagenProductoService.listarImagenes();
     }
 
-//    @GetMapping("/listarImagenesProducto")
-//    public List<ImagenProductoDTO> listarImagenesProducto() {
-//
-//        return imagenProductoService.listarPorProducto(Long );
-//    }
-//
+    @GetMapping("/presentacion/{idPresentacion}")
+    public ResponseEntity<ImagenProductoDTO> obtenerImagenPorPresentacion(
+            @PathVariable Long idPresentacion
+    ) {
+        ImagenProductoDTO imagen =
+                imagenProductoService.obtenerImagenPorPresentacion(idPresentacion);
+
+        return ResponseEntity.ok(imagen);
+    }
 
 
 

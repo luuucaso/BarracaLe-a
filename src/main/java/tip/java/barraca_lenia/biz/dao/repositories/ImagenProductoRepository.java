@@ -6,12 +6,15 @@ import org.springframework.stereotype.Repository;
 import tip.java.barraca_lenia.biz.dao.entities.ImagenProducto;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ImagenProductoRepository extends JpaRepository<ImagenProducto,Long> {
 
 
     List<ImagenProducto> findByProductoId(Long idProducto);
+
+    Optional<ImagenProducto> findFirstByPresentacionId(Long idPresentacion);
 
     @Query("SELECT i FROM ImagenProducto i JOIN FETCH i.producto JOIN FETCH i.presentacion")
     List<ImagenProducto> findAllConProductoYPresentacion();
