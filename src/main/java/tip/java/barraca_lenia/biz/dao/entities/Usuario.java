@@ -41,6 +41,10 @@ public class Usuario {
 
     @JsonIgnore
     @OneToMany(mappedBy = "usuario")
+    private List<Notificacion> notificaciones;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "usuario")
     private List<RolUsuario> rolUsuarios;
 
 

@@ -26,7 +26,14 @@ public class Notificacion {
     @Column(name = "fecha_hora")
     private LocalDateTime fechaHora;
 
+    @Column(name = "leido")
+    private boolean leido;
+
     @ManyToOne
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 }

@@ -7,10 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import tip.java.barraca_lenia.biz.dao.entities.*;
 import tip.java.barraca_lenia.biz.dao.repositories.*;
-import tip.java.barraca_lenia.dto.ClienteAnonimoDTO;
-import tip.java.barraca_lenia.dto.DetalleDTO;
-import tip.java.barraca_lenia.dto.EstadisticasDTO;
-import tip.java.barraca_lenia.dto.PedidoDTO;
+import tip.java.barraca_lenia.dto.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +25,7 @@ public class PedidoService {
     private final EstadoRepository estadoRepository;
     private final PresentacionRepository presentacionRepository;
     private final ClienteAnonimoService clienteAnonimoService;
+    private final NotificacionService notificacionService;
 
 
     //crear pedido
@@ -53,7 +51,7 @@ public class PedidoService {
                 .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
 
         Pedido pedido = new Pedido();
-        pedido.setFechaPedido(LocalDate.now());
+        pedido.setFechaPedido(LocalDate.    now());
         pedido.setFechaEntrega(dto.getFechaEntrega());
         pedido.setHorarioEntrega(dto.getHorarioEntrega());
         pedido.setUsuario(usuario);
@@ -180,15 +178,43 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.findById(idPedido)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
 
+        Estado estadoAnterior = pedido.getEstado();
 
         Estado estado = estadoRepository.findById(dto.getIdEstado())
                 .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
 
         pedido.setEstado(estado);
 
-        Pedido actualizado = pedidoRepository.save(pedido);
+        Pedido pedidoActualizado = pedidoRepository.save(pedido);
 
-        return mapeo(actualizado);
+        if (
+                estadoAnterior != null &&
+                        !estadoAnterior.getId().equals(estado.getId()) &&
+                        pedidoActualizado.getUsuario() != null
+        ) {
+            NotificacionDTO notificacionDTO = new NotificacionDTO();
+
+            notificacionDTO.setMensaje(
+                    "El estado de tu pedido fue actualizado a: " + formatearEstado(estado.getEstado())
+            );
+
+            notificacionDTO.setIdPedido(pedidoActualizado.getId());
+            notificacionDTO.setIdUsuario(pedidoActualizado.getUsuario().getId());
+
+            notificacionService.crearNotificacion(notificacionDTO);
+        }
+
+        return mapeo(pedidoActualizado);
+    }
+
+    private String formatearEstado(String estado) {
+        return switch (estado) {
+            case "en_espera" -> "En espera";
+            case "en_preparacion" -> "En preparación";
+            case "entregado" -> "Entregado";
+            case "rechazado" -> "Rechazado";
+            default -> estado;
+        };
     }
 
 
