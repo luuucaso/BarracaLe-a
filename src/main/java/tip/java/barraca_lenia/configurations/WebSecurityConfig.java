@@ -36,7 +36,8 @@ public class WebSecurityConfig {
                         // TEMPORAL: todos los GET públicos (catálogo, presentaciones, productos, etc.)
                         .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/direcciones/**").permitAll()
-                        .requestMatchers("/cliente-anonimo/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/cliente-anonimo").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/cliente-anonimo/**").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/pedidos/crearPedido")
                         .permitAll()
