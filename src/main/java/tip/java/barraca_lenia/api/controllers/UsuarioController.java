@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tip.java.barraca_lenia.biz.dao.entities.Usuario;
 import tip.java.barraca_lenia.biz.dao.services.UsuarioService;
+import tip.java.barraca_lenia.dto.RegistroResponseDTO;
 import tip.java.barraca_lenia.dto.RegistroUsuarioDTO;
 import tip.java.barraca_lenia.dto.UsuarioDTO;
 
@@ -30,8 +31,9 @@ public class UsuarioController {
 
     //registrar
     @PostMapping("/registrarUsuario")
-    public Usuario registrar(@RequestBody RegistroUsuarioDTO dto) {
-        return usuarioService.registrar(dto);
+    public ResponseEntity<RegistroResponseDTO> registrar(@RequestBody RegistroUsuarioDTO dto) {
+        RegistroResponseDTO response = usuarioService.registrar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     //borrar

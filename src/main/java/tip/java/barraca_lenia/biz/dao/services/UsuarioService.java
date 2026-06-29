@@ -9,11 +9,13 @@ import tip.java.barraca_lenia.biz.dao.entities.Usuario;
 import tip.java.barraca_lenia.biz.dao.repositories.RolRepository;
 import tip.java.barraca_lenia.biz.dao.repositories.RolUsuarioRepository;
 import tip.java.barraca_lenia.biz.dao.repositories.UsuarioRepository;
+import tip.java.barraca_lenia.dto.RegistroResponseDTO;
 import tip.java.barraca_lenia.dto.RegistroUsuarioDTO;
 import tip.java.barraca_lenia.dto.UsuarioDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -44,7 +46,7 @@ public class UsuarioService {
     }
 
 
-    public Usuario registrar(RegistroUsuarioDTO dto) {
+    public RegistroResponseDTO registrar(RegistroUsuarioDTO dto) {
 
         Optional<Usuario> existente = usuarioRepository.findByTelefono(dto.getTelefono());
 
@@ -60,8 +62,12 @@ public class UsuarioService {
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
 
-        Rol rol = rolRepository.findByNombre(dto.getRol())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+        Rol rol = rolRepository.findByNombreIgnoreCase(dto.getRol())
+                .orElseGet(() -> {
+                    Rol nuevoRol = new Rol();
+                    nuevoRol.setNombre(dto.getRol());
+                    return rolRepository.save(nuevoRol);
+                });
 
         RolUsuario rolUsuario = new RolUsuario();
         rolUsuario.setUsuario(usuarioGuardado);
@@ -69,7 +75,18 @@ public class UsuarioService {
 
         rolUsuarioRepository.save(rolUsuario);
 
-        return usuarioGuardado;
+        usuarioGuardado.setRolUsuarios(List.of(rolUsuario));
+
+        List<String> roles = usuarioGuardado.getRolUsuarios().stream()
+                .map(ru -> ru.getRol().getNombre())
+                .collect(Collectors.toList());
+
+        return new RegistroResponseDTO(
+                usuarioGuardado.getId(),
+                usuarioGuardado.getNombre(),
+                usuarioGuardado.getTelefono(),
+                roles
+        );
     }
 
 

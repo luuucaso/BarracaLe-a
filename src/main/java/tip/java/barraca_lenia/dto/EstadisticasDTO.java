@@ -25,7 +25,8 @@ public class EstadisticasDTO {
     @AllArgsConstructor
     public static class VentaMensualDTO {
         private String mes;
-        private Double totalVentas;
+        private Double totalVentasEstimado;
+        private Double totalVentasEntregado;
     }
 
     @Getter
@@ -34,7 +35,7 @@ public class EstadisticasDTO {
     @AllArgsConstructor
     public static class ProductoMasVendidoDTO {
         private String nombreProducto;
-        private Integer cantidadTotal;
+        private Double kilosTotal;
         private Double totalVentas;
     }
 
@@ -66,7 +67,8 @@ public class EstadisticasDTO {
     public static class VentaProductoMesDTO {
         private String mes;
         private String producto;
-        private Double kilosVendidos;
+        private Double kilosEstimados;
+        private Double kilosEntregados;
     }
 
 }

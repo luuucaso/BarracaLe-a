@@ -364,16 +364,28 @@ public class PedidoService {
     private List<EstadisticasDTO.VentaMensualDTO> obtenerVentasMensuales() {
         List<Pedido> pedidos = pedidoRepository.findAll();
 
-        Map<String, Double> ventasPorMes = pedidos.stream()
+        Map<String, Double> ventasEstimadasPorMes = pedidos.stream()
                 .filter(p -> p.getFechaPedido() != null)
                 .collect(Collectors.groupingBy(
                         p -> YearMonth.from(p.getFechaPedido()).toString(),
                         Collectors.summingDouble(Pedido::getPrecioTotal)
                 ));
 
+        Map<String, Double> ventasEntregadasPorMes = pedidos.stream()
+                .filter(p -> p.getFechaPedido() != null)
+                .filter(p -> p.getEstado() != null && "Entregado".equalsIgnoreCase(p.getEstado().getEstado()))
+                .collect(Collectors.groupingBy(
+                        p -> YearMonth.from(p.getFechaPedido()).toString(),
+                        Collectors.summingDouble(Pedido::getPrecioTotal)
+                ));
+
         List<EstadisticasDTO.VentaMensualDTO> resultado = new ArrayList<>();
-        for (Map.Entry<String, Double> entry : ventasPorMes.entrySet()) {
-            resultado.add(new EstadisticasDTO.VentaMensualDTO(entry.getKey(), entry.getValue()));
+        for (String mes : ventasEstimadasPorMes.keySet()) {
+            resultado.add(new EstadisticasDTO.VentaMensualDTO(
+                    mes,
+                    ventasEstimadasPorMes.get(mes),
+                    ventasEntregadasPorMes.getOrDefault(mes, 0.0)
+            ));
         }
 
         return resultado.stream()
@@ -384,10 +396,14 @@ public class PedidoService {
     private List<EstadisticasDTO.ProductoMasVendidoDTO> obtenerProductosMasVendidos() {
 
         List<Pedido> pedidos = pedidoRepository.findAll();
-        Map<String, Integer> cantidadPorProducto = new HashMap<>();
+        Map<String, Double> kilosPorProducto = new HashMap<>();
         Map<String, Double> ventasPorProducto = new HashMap<>();
 
         for (Pedido pedido : pedidos) {
+            if (pedido.getEstado() == null || !"Entregado".equalsIgnoreCase(pedido.getEstado().getEstado())) {
+                continue;
+            }
+
             if (pedido.getDetallePedidos() != null) {
                 for (DetallePedido detalle : pedido.getDetallePedidos()) {
 
@@ -397,10 +413,15 @@ public class PedidoService {
                         String nombreProducto =
                                 detalle.getPresentacion().getProducto().getNombre();
 
-                        cantidadPorProducto.put(
+                        int cantidadPresentacion = detalle.getPresentacion().getCantidad() != null
+                                ? detalle.getPresentacion().getCantidad()
+                                : 1;
+
+                        double kilosDetalle = detalle.getCantidad() * cantidadPresentacion;
+
+                        kilosPorProducto.put(
                                 nombreProducto,
-                                cantidadPorProducto.getOrDefault(nombreProducto, 0)
-                                        + detalle.getCantidad()
+                                kilosPorProducto.getOrDefault(nombreProducto, 0.0) + kilosDetalle
                         );
 
                         ventasPorProducto.put(
@@ -413,7 +434,7 @@ public class PedidoService {
             }
         }
 
-        return cantidadPorProducto.entrySet()
+        return kilosPorProducto.entrySet()
                 .stream()
                 .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
                 .limit(10)
@@ -510,7 +531,8 @@ public class PedidoService {
 
         List<Pedido> pedidos = pedidoRepository.findAll();
 
-        Map<String, Double> kilosPorProductoMes = new HashMap<>();
+        Map<String, Double> kilosEstimadosPorProductoMes = new HashMap<>();
+        Map<String, Double> kilosEntregadosPorProductoMes = new HashMap<>();
 
         for (Pedido pedido : pedidos) {
 
@@ -519,6 +541,7 @@ public class PedidoService {
             }
 
             String mes = YearMonth.from(pedido.getFechaPedido()).toString();
+            boolean esEntregado = pedido.getEstado() != null && "Entregado".equalsIgnoreCase(pedido.getEstado().getEstado());
 
             for (DetallePedido detalle : pedido.getDetallePedidos()) {
 
@@ -532,38 +555,49 @@ public class PedidoService {
                         .getProducto()
                         .getNombre();
 
-                double kilosVendidos =
-                        detalle.getCantidad()
-                                * detalle.getPresentacion().getCantidad();
+                int cantidadPresentacion = detalle.getPresentacion().getCantidad() != null
+                        ? detalle.getPresentacion().getCantidad()
+                        : 1;
+
+                double kilosVendidos = detalle.getCantidad() * cantidadPresentacion;
 
                 String clave = mes + "|" + producto;
 
-                kilosPorProductoMes.put(
+                kilosEstimadosPorProductoMes.put(
                         clave,
-                        kilosPorProductoMes.getOrDefault(clave, 0.0)
-                                + kilosVendidos
+                        kilosEstimadosPorProductoMes.getOrDefault(clave, 0.0) + kilosVendidos
                 );
+
+                if (esEntregado) {
+                    kilosEntregadosPorProductoMes.put(
+                            clave,
+                            kilosEntregadosPorProductoMes.getOrDefault(clave, 0.0) + kilosVendidos
+                    );
+                }
             }
         }
 
         List<EstadisticasDTO.VentaProductoMesDTO> resultado = new ArrayList<>();
 
-        for (Map.Entry<String, Double> entry : kilosPorProductoMes.entrySet()) {
+        for (Map.Entry<String, Double> entry : kilosEstimadosPorProductoMes.entrySet()) {
 
             String[] partes = entry.getKey().split("\\|");
+            String mes = partes[0];
+            String producto = partes[1];
 
             resultado.add(
                     new EstadisticasDTO.VentaProductoMesDTO(
-                            partes[0], // mes
-                            partes[1], // producto
-                            entry.getValue() // kilos vendidos
+                            mes,
+                            producto,
+                            entry.getValue(),
+                            kilosEntregadosPorProductoMes.getOrDefault(entry.getKey(), 0.0)
                     )
             );
         }
 
         return resultado.stream()
-                .sorted(Comparator.comparing(
-                        EstadisticasDTO.VentaProductoMesDTO::getMes))
+                .sorted(Comparator.comparing(EstadisticasDTO.VentaProductoMesDTO::getMes)
+                        .thenComparing(EstadisticasDTO.VentaProductoMesDTO::getProducto))
                 .toList();
     }
 }
