@@ -2,6 +2,8 @@ package tip.java.barraca_lenia.biz.dao.services;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tip.java.barraca_lenia.biz.dao.entities.ImagenProducto;
 import tip.java.barraca_lenia.biz.dao.entities.Presentacion;
@@ -28,6 +30,7 @@ public class ImagenProductoService {
     private final PresentacionRepository presentacionRepository;
 
 
+    @CacheEvict(value = "imagenes",  allEntries = true)
     public ImagenProductoDTO crearImagenProducto(ImagenProductoDTO dto) {
 
         Presentacion presentacion = presentacionRepository.findById(dto.getIdPresentacion())
@@ -50,6 +53,7 @@ public class ImagenProductoService {
         return mapeo(guardada);
     }
 
+    @Cacheable("imagenes")
     public List<ImagenProductoDTO> listarImagenes() {
         return imagenProductoRepository.findAllConProductoYPresentacion()
                 .stream()
